@@ -39,7 +39,7 @@ export default function Home() {
   const [outputFormat, setOutputFormat] = useState("html");
   const [framework, setFramework] = useState("tailwind");
   const [activeTab, setActiveTab] = useState("design-spec");
-  const [previewDevice, setPreviewDevice] = useState("desktop");
+  const [previewDevice, setPreviewDevice] = useState<"mobile" | "tablet" | "desktop">("desktop");
   const { toast } = useToast();
 
   const generateMutation = useMutation({

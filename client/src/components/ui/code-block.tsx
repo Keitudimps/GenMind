@@ -15,9 +15,9 @@ export function CodeBlock({ code, language }: CodeBlockProps) {
         
         // Import language definitions
         if (language === "html") {
-          await import("prismjs/components/prism-markup");
+          await import("prismjs/components/prism-markup" as any);
         } else if (language === "jsx") {
-          await import("prismjs/components/prism-jsx");
+          await import("prismjs/components/prism-jsx" as any);
         }
         
         Prism.highlightAll();

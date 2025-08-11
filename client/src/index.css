@@ -1,0 +1,124 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(0 0% 100%);
+  --foreground: hsl(222.2 84% 4.9%);
+  --card: hsl(0 0% 100%);
+  --card-foreground: hsl(222.2 84% 4.9%);
+  --popover: hsl(0 0% 100%);
+  --popover-foreground: hsl(222.2 84% 4.9%);
+  --primary: hsl(231 81% 67%);
+  --primary-foreground: hsl(0 0% 100%);
+  --secondary: hsl(210 40% 94%);
+  --secondary-foreground: hsl(222.2 84% 4.9%);
+  --muted: hsl(210 40% 96%);
+  --muted-foreground: hsl(215.4 16.3% 46.9%);
+  --accent: hsl(210 40% 94%);
+  --accent-foreground: hsl(222.2 84% 4.9%);
+  --destructive: hsl(0 84.2% 60.2%);
+  --destructive-foreground: hsl(210 40% 98%);
+  --border: hsl(214.3 31.8% 91.4%);
+  --input: hsl(214.3 31.8% 91.4%);
+  --ring: hsl(231 81% 67%);
+  --radius: 0.75rem;
+  
+  /* Custom GenMind colors */
+  --soft-blue: hsl(213 100% 77%);
+  --mint-green: hsl(159 81% 74%);
+  --lavender: hsl(266 100% 84%);
+  --glass-white: hsla(0 0% 100% / 0.7);
+  --glass-border: hsla(0 0% 100% / 0.2);
+  
+  /* Typography */
+  --font-inter: 'Inter', sans-serif;
+  --font-jetbrains: 'JetBrains Mono', monospace;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 text-foreground font-inter antialiased min-h-screen;
+  }
+}
+
+@layer components {
+  .glass {
+    background: var(--glass-white);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+  }
+  
+  .ripple-effect {
+    @apply relative overflow-hidden;
+    transition: all 0.2s ease;
+  }
+  
+  .ripple-effect:active::after {
+    content: '';
+    @apply absolute top-1/2 left-1/2 w-1 h-1 bg-white/50 rounded-full;
+    transform: translate(-50%, -50%);
+    animation: ripple 0.6s linear;
+  }
+  
+  .code-block {
+    @apply font-jetbrains text-sm leading-relaxed;
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 1.5rem;
+    overflow-x: auto;
+  }
+  
+  .loading-skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+  }
+  
+  .tab-active {
+    @apply bg-gradient-to-r from-blue-50 to-purple-50 border-primary text-primary;
+  }
+}
+
+@layer utilities {
+  .animation-delay-200 {
+    animation-delay: 200ms;
+  }
+  
+  .animation-delay-400 {
+    animation-delay: 400ms;
+  }
+}
+
+@keyframes ripple {
+  0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(4); opacity: 0; }
+}
+
+@keyframes loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes glow {
+  0% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.5); }
+  100% { box-shadow: 0 0 30px rgba(99, 102, 241, 0.8); }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-glow {
+  animation: glow 2s ease-in-out infinite alternate;
+}

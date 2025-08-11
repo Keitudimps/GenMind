@@ -1,0 +1,53 @@
+# App Name
+GenMind
+
+# Description
+GenMind is a light-themed, AI-powered content generator focused on frontend UI design. It allows users to describe a user interface in natural language and receive both a visual spec and fully downloadable code for that UI. Powered by Google Gemini for intelligent design/code generation.
+
+# Overview
+Users describe the UI they want (e.g., "A modern dashboard with cards and dark sidebar"). GenMind analyzes the prompt using Gemini Pro, generates a short design explanation, and outputs working frontend code (HTML, CSS, JS or React). The result is shown live and available for download.
+
+# Features
+- 🖋️ UI Prompt Input – Natural language prompt for UI design
+- 📄 Design Spec Generator – Summarizes what the UI will include and how it looks
+- 💻 Code Generator – Produces working frontend code using Gemini Pro (HTML/CSS/JS or React)
+- 🧪 Live Preview – Shows a rendered preview of the UI (optional iframe or sandbox)
+- 📥 Download Button – User can download the full code as a file (e.g., `.zip`, `.html`, or `.jsx`)
+- 📱 Fully responsive and mobile-friendly layout
+
+# Design Preferences
+- Light theme only – no dark mode
+- Soft glassmorphism containers for results
+- Monospace code output (JetBrains Mono)
+- Pastel UI accents (blue, mint, lavender)
+- Clean layout with tabs or vertical sections
+- Font: Inter for UI, JetBrains Mono for code
+- Micro-interactions: hover, button ripple, smooth scroll
+
+# AI & API Integration
+- Text + Code: Google Gemini API (Gemini Pro)
+    - Prompt: user UI request
+    - Output 1: design spec (as markdown or text)
+    - Output 2: frontend code (HTML/CSS or React)
+
+# User Flow
+1. User enters a prompt like:  
+   _“Create a pricing table with three columns and a call-to-action”_
+2. Gemini generates:
+   - ✅ Design summary/spec
+   - ✅ HTML/CSS or React code
+3. UI shows:
+   - Code with syntax highlighting
+   - Download button to get `.zip` or code file
+   - Optional live preview in iframe
+
+# Branding & Identity
+- App name: GenMind
+- Tagline: "Design it. Code it. Instantly."
+- Friendly and smart assistant voice
+- For designers, devs, and product creators
+
+# Additional Capabilities
+- Export code as `.zip` or single `.html` file
+- Syntax highlighting for readability
+- Option to choose between HTML/CSS or React output

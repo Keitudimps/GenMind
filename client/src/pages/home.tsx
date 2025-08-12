@@ -145,10 +145,7 @@ export default function Home() {
                 <p className="text-sm text-slate-600">Design it. Code it. Instantly.</p>
               </div>
             </div>
-            <nav className="hidden md:flex items-center space-x-6">
-              <a href="#" className="text-slate-600 hover:text-primary transition-colors">Features</a>
-              <a href="#" className="text-slate-600 hover:text-primary transition-colors">Examples</a>
-              <a href="#" className="text-slate-600 hover:text-primary transition-colors">Docs</a>
+            <nav className="hidden md:flex items-center">
               <Button className="bg-primary hover:bg-primary/90 ripple-effect">
                 Get Started
               </Button>

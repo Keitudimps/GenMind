@@ -1,0 +1,924 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GenMind - AI-Powered UI Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                        'jetbrains': ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        'soft-blue': '#8BB6FF',
+                        'mint-green': '#7FEFB0',
+                        'lavender': '#C4A1FF',
+                        'glass-white': 'rgba(255, 255, 255, 0.25)',
+                        'glass-border': 'rgba(255, 255, 255, 0.18)',
+                    },
+                    backdropBlur: {
+                        'xs': '2px',
+                    },
+                    animation: {
+                        'ripple': 'ripple 0.6s linear',
+                        'fadeIn': 'fadeIn 0.3s ease-out',
+                        'slideUp': 'slideUp 0.4s ease-out',
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        @keyframes ripple {
+            0% { transform: scale(0); opacity: 1; }
+            100% { transform: scale(4); opacity: 0; }
+        }
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+        @keyframes slideUp {
+            0% { transform: translateY(20px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+        .glass {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        .ripple-effect {
+            position: relative;
+            overflow: hidden;
+        }
+        .ripple-effect::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        .ripple-effect:active::before {
+            width: 300px;
+            height: 300px;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 font-inter">
+    
+    <!-- @COMPONENT: Header -->
+    <header class="relative z-10 py-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-gradient-to-r from-soft-blue to-lavender rounded-xl flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-semibold text-gray-900">GenMind</h1>
+                        <p class="text-sm text-gray-600">Design it. Code it. Instantly.</p>
+                    </div>
+                </div>
+                <div class="hidden md:flex items-center space-x-4">
+                    <button class="px-4 py-2 text-gray-600 hover:text-gray-900 transition-colors">Docs</button>
+                    <button class="px-4 py-2 text-gray-600 hover:text-gray-900 transition-colors">Examples</button>
+                    <button class="px-6 py-2 bg-gradient-to-r from-soft-blue to-lavender text-white rounded-lg hover:shadow-lg hover:scale-105 transition-all duration-200 ripple-effect">
+                        Get Started
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- @END_COMPONENT: Header -->
+
+    <!-- @COMPONENT: MainContent -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- @COMPONENT: PromptInput -->
+        <div class="mb-8 animate-fadeIn">
+            <div class="glass rounded-2xl p-8 shadow-xl">
+                <div class="text-center mb-6">
+                    <h2 class="text-3xl font-semibold text-gray-900 mb-2">Describe Your UI Vision</h2>
+                    <p class="text-gray-600">Tell us what you want to build, and we'll generate the design spec and code for you</p>
+                </div>
+                
+                <div class="max-w-4xl mx-auto">
+                    <div class="relative">
+                        <textarea 
+                            data-mock="true"
+                            data-bind="promptText"
+                            class="w-full h-32 px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-soft-blue focus:border-transparent outline-none resize-none text-gray-800 placeholder-gray-400 transition-all duration-200"
+                            placeholder="Example: Create a modern dashboard with navigation sidebar, metrics cards, and a data table with search functionality..."
+                        >Create a modern pricing table with three columns, gradient backgrounds, feature lists, and call-to-action buttons</textarea>
+                        <div class="absolute bottom-3 right-3 flex items-center space-x-2">
+                            <span class="text-xs text-gray-400">Pro tip: Be specific about layout, colors, and interactions</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Options Row -->
+                    <div class="flex flex-wrap items-center justify-between mt-6 gap-4">
+                        <div class="flex items-center space-x-4">
+                            <label class="flex items-center space-x-2">
+                                <span class="text-sm font-medium text-gray-700">Output Format:</span>
+                            </label>
+                            <div class="flex bg-gray-100 rounded-lg p-1">
+                                <button data-format="html" class="px-4 py-2 rounded-md bg-white shadow-sm text-sm font-medium text-gray-900 transition-all duration-200">HTML/CSS</button>
+                                <button data-format="react" class="px-4 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-gray-900 transition-all duration-200">React</button>
+                            </div>
+                        </div>
+                        
+                        <button 
+                            data-event="click:generateUI"
+                            data-implementation="Should call Gemini API and show loading state"
+                            class="px-8 py-3 bg-gradient-to-r from-mint-green to-soft-blue text-white font-medium rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 ripple-effect flex items-center space-x-2"
+                        >
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                            </svg>
+                            <span>Generate UI</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: PromptInput -->
+
+        <!-- @COMPONENT: ResultsSection -->
+        <div class="grid lg:grid-cols-2 gap-8 animate-slideUp" style="animation-delay: 0.2s;">
+            
+            <!-- @COMPONENT: DesignSpec -->
+            <div class="space-y-6">
+                <!-- Design Specification -->
+                <div class="glass rounded-2xl p-6 shadow-xl">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-xl font-semibold text-gray-900 flex items-center">
+                            <svg class="w-5 h-5 text-lavender mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                            Design Specification
+                        </h3>
+                        <button class="text-gray-400 hover:text-gray-600 transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <div class="prose prose-sm max-w-none" data-mock="true">
+                        <h4 class="text-lg font-medium text-gray-800 mb-2">Modern Pricing Table Design</h4>
+                        <p class="text-gray-600 mb-4">A clean, conversion-optimized pricing table featuring three distinct pricing tiers with gradient backgrounds and clear visual hierarchy.</p>
+                        
+                        <h5 class="font-medium text-gray-800 mb-2">Key Components:</h5>
+                        <ul class="text-sm text-gray-600 space-y-1">
+                            <li>• Three pricing columns (Basic, Pro, Enterprise)</li>
+                            <li>• Gradient background treatments</li>
+                            <li>• Feature comparison lists with checkmarks</li>
+                            <li>• Prominent call-to-action buttons</li>
+                            <li>• Mobile-responsive stack layout</li>
+                            <li>• Hover animations and micro-interactions</li>
+                        </ul>
+                        
+                        <h5 class="font-medium text-gray-800 mb-2 mt-4">Design Tokens:</h5>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-2 py-1 bg-soft-blue bg-opacity-20 text-soft-blue rounded text-xs">Primary Blue</span>
+                            <span class="px-2 py-1 bg-mint-green bg-opacity-20 text-green-600 rounded text-xs">Accent Green</span>
+                            <span class="px-2 py-1 bg-lavender bg-opacity-20 text-purple-600 rounded text-xs">Premium Purple</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Generated Code -->
+                <div class="glass rounded-2xl p-6 shadow-xl">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-xl font-semibold text-gray-900 flex items-center">
+                            <svg class="w-5 h-5 text-mint-green mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                            </svg>
+                            Generated Code
+                        </h3>
+                        <div class="flex items-center space-x-2">
+                            <button 
+                                data-event="click:copyCode"
+                                class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-all duration-200"
+                                title="Copy to clipboard"
+                            >
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                                </svg>
+                            </button>
+                            <button 
+                                data-event="click:downloadCode"
+                                class="px-3 py-1.5 bg-gradient-to-r from-soft-blue to-lavender text-white text-sm rounded-lg hover:shadow-lg transition-all duration-200"
+                            >
+                                Download
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-50 rounded-xl p-4 max-h-96 overflow-y-auto">
+                        <pre class="text-sm" data-mock="true"><code class="language-html font-jetbrains"><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Pricing Table</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-bold text-gray-900 mb-4">Choose Your Plan</h2>
+            <p class="text-lg text-gray-600">Select the perfect plan for your needs</p>
+        </div>
+        
+        <div class="grid md:grid-cols-3 gap-8">
+            <!-- Basic Plan -->
+            <div class="bg-white rounded-2xl shadow-lg p-8 relative">
+                <h3 class="text-2xl font-semibold mb-2">Basic</h3>
+                <div class="text-4xl font-bold text-blue-600 mb-6">$29<span class="text-lg font-normal text-gray-600">/mo</span></div>
+                <ul class="space-y-3 mb-8">
+                    <li class="flex items-center"><svg class="w-5 h-Let me analyze this request according to the design decision framework:
+
+1. Initial Analysis:
+   - No specific aesthetic requirement like "make it look like Airbnb"
+   - Need to evaluate based on factors
+
+2. Evaluation:
+   A. Purpose & User Needs: Experience-Focused - This is a content generator tool that needs to feel innovative and engaging
+   B. Content Characteristics: Mixed - Has both visual elements (UI previews) and information-dense sections (code)
+   C. Market Context: Design-Differentiated - AI tools market where visual identity matters
+   D. Update Frequency: Trend-Sensitive - AI/tech space values modern appearance
+   E. Component Complexity: Custom UI Needed - Glassmorphism, unique layout requirements
+
+   This leans toward Experience-Focused/Visual approach (3+ factors). I should use a reference-based approach, likely taking inspiration from modern productivity tools like Notion, or AI tools interfaces.
+
+3. Design Approach: Reference-Based
+   - Draw inspiration from modern AI/productivity tools
+   - Focus on glassmorphism, clean layouts, pastel accents
+   - Use the specific requirements: Inter font, JetBrains Mono for code, light theme
+
+Key requirements:
+- Light theme with glassmorphism
+- Pastel accents (blue, mint, lavender)
+- Inter for UI, JetBrains Mono for code
+- Micro-interactions
+- Natural language input
+- Code generation with syntax highlighting
+- Live preview
+- Download functionality
+- Responsive design
+
+I'll create a comprehensive design that includes:
+1. Header with branding
+2. Main input section for prompts
+3. Output section with tabs for design spec and code
+4. Live preview area
+5. Download/export controls
+6. Proper glassmorphism styling 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# style
+**Design Approach:** Reference-based approach inspired by modern AI productivity tools like Notion and Cursor, with custom glassmorphism implementation.
+
+**Color Palette:** 
+- Primary: #6366F1 (indigo), Secondary: #10B981 (mint), Accent: #A855F7 (lavender)
+- Backgrounds: #FAFBFF (main), #FFFFFF (cards), #F8FAFC (subtle areas)
+- Text: #1E293B (primary), #64748B (secondary), #94A3B8 (muted)
+- Glass: rgba(255,255,255,0.7) with backdrop-blur
+
+**Typography:** Inter for UI elements, JetBrains Mono for code blocks, with precise spacing and hierarchy.
+
+**Layout:** Clean vertical sections with glassmorphism containers, centered content with max-width constraints, responsive grid system.
+
+**Components:** Glass-morphic cards, gradient buttons with ripple effects, syntax-highlighted code blocks, tabbed interfaces, modal overlays for previews.
+
+**Interactions:** Subtle hover animations, button ripples, smooth transitions, loading states with skeleton UI, micro-feedback animations.
+
+# directory_structure
+```json
+[
+     {"path": "production_design_mockup.html", "status": "new"}
+]
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GenMind - Design it. Code it. Instantly.</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                        'mono': ['JetBrains Mono', 'monospace']
+                    },
+                    colors: {
+                        'glass': 'rgba(255, 255, 255, 0.7)',
+                        'glass-border': 'rgba(255, 255, 255, 0.2)',
+                        'primary': '#6366F1',
+                        'mint': '#10B981',
+                        'lavender': '#A855F7'
+                    },
+                    backdropBlur: {
+                        'glass': '20px'
+                    },
+                    animation: {
+                        'ripple': 'ripple 0.6s linear',
+                        'float': 'float 3s ease-in-out infinite',
+                        'glow': 'glow 2s ease-in-out infinite alternate'
+                    },
+                    keyframes: {
+                        ripple: {
+                            '0%': { transform: 'scale(0)', opacity: '1' },
+                            '100%': { transform: 'scale(4)', opacity: '0' }
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-10px)' }
+                        },
+                        glow: {
+                            '0%': { boxShadow: '0 0 20px rgba(99, 102, 241, 0.5)' },
+                            '100%': { boxShadow: '0 0 30px rgba(99, 102, 241, 0.8)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .ripple-effect {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .ripple-effect:active::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            animation: ripple 0.6s linear;
+        }
+        
+        .syntax-highlight {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 1.5rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            overflow-x: auto;
+        }
+        
+        .loading-skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+        
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        
+        .tab-active {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(168, 85, 247, 0.1));
+            border-color: #6366F1;
+        }
+        
+        .preview-frame {
+            border: 2px solid rgba(99, 102, 241, 0.2);
+            border-radius: 16px;
+            background: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="font-inter bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 min-h-screen">
+    <!-- Header -->
+    <header class="glass border-b border-glass-border sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-primary to-lavender rounded-xl flex items-center justify-center animate-float">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-slate-900">GenMind</h1>
+                        <p class="text-sm text-slate-600">Design it. Code it. Instantly.</p>
+                    </div>
+                </div>
+                <nav class="hidden md:flex items-center space-x-6">
+                    <a href="#" class="text-slate-600 hover:text-primary transition-colors">Features</a>
+                    <a href="#" class="text-slate-600 hover:text-primary transition-colors">Examples</a>
+                    <a href="#" class="text-slate-600 hover:text-primary transition-colors">Docs</a>
+                    <button class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors ripple-effect">
+                        Get Started
+                    </button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Hero Section -->
+        <section class="text-center mb-12">
+            <h2 class="text-4xl md:text-5xl font-bold text-slate-900 mb-4">
+                Transform Ideas into
+                <span class="bg-gradient-to-r from-primary to-lavender bg-clip-text text-transparent">
+                    Beautiful UIs
+                </span>
+            </h2>
+            <p class="text-xl text-slate-600 max-w-3xl mx-auto mb-8">
+                Describe your UI in plain English and watch GenMind generate both design specifications and production-ready code powered by Google Gemini AI.
+            </p>
+        </section>
+
+        <!-- Input Section -->
+        <section class="mb-8">
+            <div class="glass rounded-2xl p-6 md:p-8">
+                <div class="flex items-center mb-6">
+                    <div class="w-8 h-8 bg-mint rounded-lg flex items-center justify-center mr-3">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-semibold text-slate-900">Describe Your UI</h3>
+                </div>
+                
+                <div class="space-y-4">
+                    <div class="relative">
+                        <textarea 
+                            id="ui-prompt" 
+                            placeholder="e.g., Create a modern dashboard with three metric cards, a sidebar navigation, and a data visualization chart..."
+                            class="w-full h-32 p-4 border border-slate-200 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all bg-white/80 backdrop-blur-sm"
+                            data-mock="true"
+                        ></textarea>
+                        <div class="absolute bottom-3 right-3 text-sm text-slate-400">
+                            <span id="char-count">0</span>/1000
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <div class="flex-1">
+                            <label class="block text-sm font-medium text-slate-700 mb-2">Output Format</label>
+                            <select class="w-full p-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary bg-white/80" data-mock="true">
+                                <option>HTML/CSS/JavaScript</option>
+                                <option>React Components</option>
+                                <option>Vue Components</option>
+                            </select>
+                        </div>
+                        
+                        <div class="flex-1">
+                            <label class="block text-sm font-medium text-slate-700 mb-2">UI Framework</label>
+                            <select class="w-full p-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary bg-white/80" data-mock="true">
+                                <option>Tailwind CSS</option>
+                                <option>Bootstrap</option>
+                                <option>Material UI</option>
+                                <option>Chakra UI</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <button 
+                        id="generate-btn"
+                        class="w-full sm:w-auto bg-gradient-to-r from-primary to-lavender text-white px-8 py-4 rounded-xl font-semibold text-lg hover:shadow-lg hover:scale-105 transition-all duration-200 ripple-effect flex items-center justify-center space-x-2 animate-glow"
+                        data-event="click:generateUI"
+                    >
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                        <span>Generate UI</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Output Section -->
+        <section id="output-section" class="hidden">
+            <!-- Tabs -->
+            <div class="glass rounded-t-2xl p-2 flex flex-wrap gap-2 mb-0">
+                <button class="tab-button tab-active px-6 py-3 rounded-lg font-medium transition-all flex items-center space-x-2" data-tab="design-spec">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                    <span>Design Spec</span>
+                </button>
+                <button class="tab-button px-6 py-3 rounded-lg font-medium transition-all flex items-center space-x-2 text-slate-600" data-tab="generated-code">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+                    </svg>
+                    <span>Generated Code</span>
+                </button>
+                <button class="tab-button px-6 py-3 rounded-lg font-medium transition-all flex items-center space-x-2 text-slate-600" data-tab="live-preview">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                    </svg>
+                    <span>Live Preview</span>
+                </button>
+            </div>
+
+            <!-- Tab Content -->
+            <div class="glass rounded-b-2xl rounded-tr-2xl p-6 md:p-8">
+                <!-- Design Specification Tab -->
+                <div id="design-spec" class="tab-content">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-xl font-semibold text-slate-900">Design Specification</h3>
+                        <button class="text-primary hover:text-blue-600 transition-colors flex items-center space-x-1">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                            </svg>
+                            <span>Copy</span>
+                        </button>
+                    </div>
+                    
+                    <div class="prose prose-slate max-w-none" data-mock="true">
+                        <h4>Dashboard Layout Overview</h4>
+                        <p>This modern dashboard features a clean, professional design with the following key components:</p>
+                        
+                        <h5>Layout Structure</h5>
+                        <ul>
+                            <li><strong>Sidebar Navigation:</strong> Left-aligned navigation panel with menu items and user profile</li>
+                            <li><strong>Main Content Area:</strong> Spacious content region with metric cards and charts</li>
+                            <li><strong>Header Bar:</strong> Top navigation with search, notifications, and user actions</li>
+                        </ul>
+                        
+                        <h5>Key Components</h5>
+                        <ul>
+                            <li><strong>Metric Cards:</strong> Three prominent cards displaying key performance indicators</li>
+                            <li><strong>Data Visualization:</strong> Interactive chart showing trends and analytics</li>
+                            <li><strong>Quick Actions:</strong> Prominent buttons for common user tasks</li>
+                        </ul>
+                        
+                        <h5>Design Principles</h5>
+                        <ul>
+                            <li>Clean, minimal aesthetic with plenty of whitespace</li>
+                            <li>Consistent color scheme using blues and neutral grays</li>
+                            <li>Responsive grid system for mobile compatibility</li>
+                            <li>Accessible contrast ratios and interactive elements</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Generated Code Tab -->
+                <div id="generated-code" class="tab-content hidden">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-xl font-semibold text-slate-900">Generated Code</h3>
+                        <div class="flex items-center space-x-3">
+                            <button class="text-primary hover:text-blue-600 transition-colors flex items-center space-x-1">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                                </svg>
+                                <span>Copy Code</span>
+                            </button>
+                            <button class="bg-mint text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors flex items-center space-x-1">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                </svg>
+                                <span>Download</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="syntax-highlight font-mono text-sm" data-mock="true">
+<pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;Modern Dashboard&lt;/title&gt;
+    &lt;script src="https://cdn.tailwindcss.com"&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body class="bg-gray-100"&gt;
+    &lt;div class="flex h-screen"&gt;
+        &lt;!-- Sidebar --&gt;
+        &lt;aside class="w-64 bg-white shadow-lg"&gt;
+            &lt;div class="p-6"&gt;
+                &lt;h1 class="text-2xl font-bold text-gray-800"&gt;Dashboard&lt;/h1&gt;
+            &lt;/div&gt;
+            &lt;nav class="mt-6"&gt;
+                &lt;a href="#" class="block px-6 py-3 text-gray-700 hover:bg-blue-50"&gt;
+                    Overview
+                &lt;/a&gt;
+                &lt;a href="#" class="block px-6 py-3 text-gray-700 hover:bg-blue-50"&gt;
+                    Analytics
+                &lt;/a&gt;
+                &lt;a href="#" class="block px-6 py-3 text-gray-700 hover:bg-blue-50"&gt;
+                    Reports
+                &lt;/a&gt;
+            &lt;/nav&gt;
+        &lt;/aside&gt;
+        
+        &lt;!-- Main Content --&gt;
+        &lt;main class="flex-1 p-8"&gt;
+            &lt;h2 class="text-3xl font-bold text-gray-900 mb-8"&gt;Overview&lt;/h2&gt;
+            
+            &lt;!-- Metric Cards --&gt;
+            &lt;div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8"&gt;
+                &lt;div class="bg-white p-6 rounded-lg shadow"&gt;
+                    &lt;h3 class="text-lg font-semibold text-gray-900"&gt;Total Users&lt;/h3&gt;
+                    &lt;p class="text-3xl font-bold text-blue-600"&gt;12,345&lt;/p&gt;
+                &lt;/div&gt;
+                &lt;div class="bg-white p-6 rounded-lg shadow"&gt;
+                    &lt;h3 class="text-lg font-semibold text-gray-900"&gt;Revenue&lt;/h3&gt;
+                    &lt;p class="text-3xl font-bold text-green-600"&gt;$67,890&lt;/p&gt;
+                &lt;/div&gt;
+                &lt;div class="bg-white p-6 rounded-lg shadow"&gt;
+                    &lt;h3 class="text-lg font-semibold text-gray-900"&gt;Growth&lt;/h3&gt;
+                    &lt;p class="text-3xl font-bold text-purple-600"&gt;+24%&lt;/p&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+            
+            &lt;!-- Chart Area --&gt;
+            &lt;div class="bg-white p-6 rounded-lg shadow"&gt;
+                &lt;h3 class="text-lg font-semibold text-gray-900 mb-4"&gt;Analytics Chart&lt;/h3&gt;
+                &lt;div class="h-64 bg-gray-100 rounded flex items-center justify-center"&gt;
+                    &lt;p class="text-gray-500"&gt;Chart visualization would go here&lt;/p&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/main&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+                    </div>
+                </div>
+
+                <!-- Live Preview Tab -->
+                <div id="live-preview" class="tab-content hidden">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-xl font-semibold text-slate-900">Live Preview</h3>
+                        <div class="flex items-center space-x-3">
+                            <button class="text-primary hover:text-blue-600 transition-colors flex items-center space-x-1">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/>
+                                </svg>
+                                <span>Full Screen</span>
+                            </button>
+                            <div class="flex items-center space-x-2 text-sm text-slate-600">
+                                <span>Responsive:</span>
+                                <button class="px-2 py-1 rounded bg-slate-100 hover:bg-slate-200 transition-colors">📱</button>
+                                <button class="px-2 py-1 rounded bg-slate-100 hover:bg-slate-200 transition-colors">💻</button>
+                                <button class="px-2 py-1 rounded bg-primary text-white">🖥️</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="preview-frame h-96 overflow-hidden" data-mock="true">
+                        <iframe 
+                            src="data:text/html;charset=utf-8,%3C!DOCTYPE%20html%3E%3Chtml%3E%3Chead%3E%3Cscript%20src%3D%22https%3A//cdn.tailwindcss.com%22%3E%3C/script%3E%3C/head%3E%3Cbody%20class%3D%22bg-gray-100%22%3E%3Cdiv%20class%3D%22flex%20h-screen%22%3E%3Caside%20class%3D%22w-64%20bg-white%20shadow-lg%22%3E%3Cdiv%20class%3D%22p-6%22%3E%3Ch1%20class%3D%22text-2xl%20font-bold%20text-gray-800%22%3EDashboard%3C/h1%3E%3C/div%3E%3C/aside%3E%3Cmain%20class%3D%22flex-1%20p-8%22%3E%3Ch2%20class%3D%22text-3xl%20font-bold%20text-gray-900%20mb-8%22%3EOverview%3C/h2%3E%3Cdiv%20class%3D%22grid%20grid-cols-3%20gap-6%22%3E%3Cdiv%20class%3D%22bg-white%20p-6%20rounded-lg%20shadow%22%3E%3Ch3%20class%3D%22text-lg%20font-semibold%22%3EUsers%3C/h3%3E%3Cp%20class%3D%22text-3xl%20font-bold%20text-blue-600%22%3E12%2C345%3C/p%3E%3C/div%3E%3Cdiv%20class%3D%22bg-white%20p-6%20rounded-lg%20shadow%22%3E%3Ch3%20class%3D%22text-lg%20font-semibold%22%3ERevenue%3C/h3%3E%3Cp%20class%3D%22text-3xl%20font-bold%20text-green-600%22%3E%2467%2C890%3C/p%3E%3C/div%3E%3Cdiv%20class%3D%22bg-white%20p-6%20rounded-lg%20shadow%22%3E%3Ch3%20class%3D%22text-lg%20font-semibold%22%3EGrowth%3C/h3%3E%3Cp%20class%3D%22text-3xl%20font-bold%20text-purple-600%22%3E%2B24%25%3C/p%3E%3C/div%3E%3C/div%3E%3C/main%3E%3C/div%3E%3C/body%3E%3C/html%3E"
+                            class="w-full h-full border-0"
+                            title="Generated UI Preview"
+                        ></iframe>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Loading State -->
+        <section id="loading-section" class="hidden">
+            <div class="glass rounded-2xl p-8">
+                <div class="text-center">
+                    <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-primary to-lavender rounded-full mb-4 animate-pulse">
+                        <svg class="w-8 h-8 text-white animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-slate-900 mb-2">Generating Your UI</h3>
+                    <p class="text-slate-600 mb-6">GenMind is analyzing your prompt and creating the perfect design...</p>
+                    
+                    <div class="space-y-3">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-4 h-4 bg-mint rounded-full animate-pulse"></div>
+                            <span class="text-sm text-slate-600">Analyzing prompt requirements</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <div class="w-4 h-4 bg-primary rounded-full animate-pulse animation-delay-200"></div>
+                            <span class="text-sm text-slate-600">Generating design specification</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <div class="w-4 h-4 bg-lavender rounded-full animate-pulse animation-delay-400"></div>
+                            <span class="text-sm text-slate-600">Creating production-ready code</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Examples Section -->
+        <section class="mt-16">
+            <div class="text-center mb-8">
+                <h3 class="text-3xl font-bold text-slate-900 mb-4">Get Inspired</h3>
+                <p class="text-lg text-slate-600">Try these example prompts to see GenMind in action</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="glass rounded-xl p-6 hover:shadow-lg transition-all duration-200 cursor-pointer" data-prompt="Create a modern e-commerce product page with image gallery, product details, and add to cart functionality">
+                    <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                        </svg>
+                    </div>
+                    <h4 class="font-semibold text-slate-900 mb-2">E-commerce Product Page</h4>
+                    <p class="text-sm text-slate-600">Modern product page with gallery, details, and cart functionality</p>
+                </div>
+                
+                <div class="glass rounded-xl p-6 hover:shadow-lg transition-all duration-200 cursor-pointer" data-prompt="Design a professional landing page for a SaaS app with hero section, features, testimonials, and pricing">
+                    <div class="w-12 h-12 bg-gradient-to-br from-mint to-green-600 rounded-lg flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <h4 class="font-semibold text-slate-900 mb-2">SaaS Landing Page</h4>
+                    <p class="text-sm text-slate-600">Complete landing page with hero, features, testimonials, and pricing</p>
+                </div>
+                
+                <div class="glass rounded-xl p-6 hover:shadow-lg transition-all duration-200 cursor-pointer" data-prompt="Build a social media dashboard with post composer, feed, notifications, and user profile sidebar">
+                    <div class="w-12 h-12 bg-gradient-to-br from-lavender to-purple-600 rounded-lg flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                        </svg>
+                    </div>
+                    <h4 class="font-semibold text-slate-900 mb-2">Social Media Dashboard</h4>
+                    <p class="text-sm text-slate-600">Complete social platform with composer, feed, and notifications</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-20 glass border-t border-glass-border">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="col-span-1 md:col-span-2">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-8 h-8 bg-gradient-to-br from-primary to-lavender rounded-lg flex items-center justify-center">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                            </svg>
+                        </div>
+                        <span class="text-lg font-bold text-slate-900">GenMind</span>
+                    </div>
+                    <p class="text-slate-600 mb-4 max-w-md">Transform your UI ideas into beautiful, production-ready code with the power of AI. Design it. Code it. Instantly.</p>
+                    <p class="text-sm text-slate-500">Powered by Google Gemini AI</p>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold text-slate-900 mb-4">Product</h4>
+                    <ul class="space-y-2 text-slate-600">
+                        <li><a href="#" class="hover:text-primary transition-colors">Features</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Examples</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Pricing</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">API Docs</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold text-slate-900 mb-4">Support</h4>
+                    <ul class="space-y-2 text-slate-600">
+                        <li><a href="#" class="hover:text-primary transition-colors">Help Center</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Community</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Contact</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Status</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-slate-200 mt-8 pt-8 text-center text-sm text-slate-500">
+                <p>&copy; 2024 GenMind. All rights reserved. Made with ❤️ for designers and developers.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        (function() {
+            // Character counter for textarea
+            const textarea = document.getElementById('ui-prompt');
+            const charCount = document.getElementById('char-count');
+            
+            if (textarea && charCount) {
+                textarea.addEventListener('input', function() {
+                    const count = this.value.length;
+                    charCount.textContent = count;
+                    
+                    if (count > 800) {
+                        charCount.classList.add('text-red-500');
+                    } else {
+                        charCount.classList.remove('text-red-500');
+                    }
+                });
+            }
+
+            // Tab functionality
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const targetTab = this.getAttribute('data-tab');
+                    
+                    // Remove active class from all buttons
+                    tabButtons.forEach(btn => {
+                        btn.classList.remove('tab-active');
+                        btn.classList.add('text-slate-600');
+                    });
+                    
+                    // Add active class to clicked button
+                    this.classList.add('tab-active');
+                    this.classList.remove('text-slate-600');
+                    
+                    // Hide all tab contents
+                    tabContents.forEach(content => {
+                        content.classList.add('hidden');
+                    });
+                    
+                    // Show target tab content
+                    const targetContent = document.getElementById(targetTab);
+                    if (targetContent) {
+                        targetContent.classList.remove('hidden');
+                    }
+                });
+            });
+
+            // Generate UI button functionality
+            const generateBtn = document.getElementById('generate-btn');
+            const outputSection = document.getElementById('output-section');
+            const loadingSection = document.getElementById('loading-section');
+            
+            if (generateBtn) {
+                generateBtn.addEventListener('click', function() {
+                    // TODO: Implement actual API call to Google Gemini
+                    
+                    // Show loading state
+                    if (loadingSection) {
+                        loadingSection.classList.remove('hidden');
+                        outputSection?.classList.add('hidden');
+                    }
+                    
+                    // Simulate API call delay
+                    setTimeout(() => {
+                        loadingSection?.classList.add('hidden');
+                        outputSection?.classList.remove('hidden');
+                        
+                        // Scroll to output section
+                        outputSection?.scrollIntoView({ behavior: 'smooth' });
+                    }, 3000);
+                });
+            }
+
+            // Example prompt cards
+            const exampleCards = document.querySelectorAll('[data-prompt]');
+            exampleCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    const prompt = this.getAttribute('data-prompt');
+                    if (textarea && prompt) {
+                        textarea.value = prompt;
+                        textarea.dispatchEvent(new Event('input'));
+                        textarea.scrollIntoView({ behavior: 'smooth' });
+                        textarea.focus();
+                    }
+                });
+            });
+
+            // Initialize syntax highlighting
+            if (typeof hljs !== 'undefined') {
+                hljs.highlightAll();
+            }
+        })();
+    </script>
+</body>
+</html>
